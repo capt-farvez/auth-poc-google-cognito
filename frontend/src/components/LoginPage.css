@@ -221,3 +221,40 @@
   box-shadow: none;
   border: none;
 }
+
+/* Account linking message styles */
+.account-link-message {
+  background: linear-gradient(135deg, #e8f4fd 0%, #f0e6ff 100%);
+  border: 1px solid #667eea;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.link-message-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.link-message-content {
+  margin-bottom: 16px;
+}
+
+.link-message-content strong {
+  display: block;
+  color: #333;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.link-message-content p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.account-link-message .google-sign-in-button,
+.account-link-message .sign-in-button {
+  margin-top: 8px;
+}

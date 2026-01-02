@@ -4,6 +4,37 @@ import { signInWithRedirect, getCurrentUser, signIn, signUp, confirmSignUp } fro
 import { Hub } from 'aws-amplify/utils';
 import './LoginPage.css';
 
+// Helper to parse account linking errors from Lambda trigger
+const parseAccountLinkingError = (errorMessage) => {
+  if (!errorMessage) return null;
+
+  if (errorMessage.includes('sign in with Google')) {
+    return {
+      type: 'use_google',
+      message: 'An account with this email already exists.',
+      action: 'Please sign in with Google instead.',
+    };
+  }
+
+  if (errorMessage.includes('sign in with your email and password')) {
+    return {
+      type: 'use_email',
+      message: 'An account with this email already exists.',
+      action: 'Please sign in with your email and password.',
+    };
+  }
+
+  if (errorMessage.includes('ACCOUNT_LINKED')) {
+    return {
+      type: 'linked',
+      message: 'Your accounts have been linked!',
+      action: 'Please sign in again to continue.',
+    };
+  }
+
+  return null;
+};
+
 function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -12,6 +43,7 @@ function LoginPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [confirmationCode, setConfirmationCode] = useState('');
   const [error, setError] = useState('');
+  const [accountLinkError, setAccountLinkError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [mode, setMode] = useState('signin'); // 'signin', 'signup', 'confirm'
@@ -24,7 +56,15 @@ function LoginPage() {
           checkUser();
           break;
         case 'signInWithRedirect_failure':
-          setError('Failed to sign in with Google');
+          // Check if this is an account linking error
+          const errorMessage = payload.data?.error?.message || payload.data?.message || '';
+          const linkError = parseAccountLinkingError(errorMessage);
+          if (linkError) {
+            setAccountLinkError(linkError);
+            setError('');
+          } else {
+            setError('Failed to sign in with Google');
+          }
           setCheckingAuth(false);
           break;
         case 'customOAuthState':
@@ -110,7 +150,14 @@ function LoginPage() {
       setMode('confirm');
     } catch (error) {
       console.error('Error signing up:', error);
-      setError(error.message || 'Failed to sign up. Please try again.');
+      const linkError = parseAccountLinkingError(error.message);
+      if (linkError) {
+        setAccountLinkError(linkError);
+        setError('');
+      } else {
+        setAccountLinkError(null);
+        setError(error.message || 'Failed to sign up. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -140,6 +187,7 @@ function LoginPage() {
   const switchMode = (newMode) => {
     setMode(newMode);
     setError('');
+    setAccountLinkError(null);
     setConfirmationCode('');
   };
 
@@ -283,7 +331,43 @@ function LoginPage() {
 
                 {error && <div className="error-message">{error}</div>}
 
-                <button type="submit" className="sign-in-button" disabled={loading}>
+                {accountLinkError && (
+                  <div className="account-link-message">
+                    <div className="link-message-icon">
+                      {accountLinkError.type === 'linked' ? '✅' : 'ℹ️'}
+                    </div>
+                    <div className="link-message-content">
+                      <strong>{accountLinkError.message}</strong>
+                      <p>{accountLinkError.action}</p>
+                    </div>
+                    {accountLinkError.type === 'use_google' && (
+                      <button
+                        type="button"
+                        className="google-sign-in-button"
+                        onClick={handleGoogleSignIn}
+                      >
+                        <svg className="google-icon" viewBox="0 0 24 24">
+                          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        Sign in with Google
+                      </button>
+                    )}
+                    {(accountLinkError.type === 'use_email' || accountLinkError.type === 'linked') && (
+                      <button
+                        type="button"
+                        className="sign-in-button"
+                        onClick={() => switchMode('signin')}
+                      >
+                        Go to Sign In
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                <button type="submit" className="sign-in-button" disabled={loading || accountLinkError}>
                   {loading ? 'Creating account...' : 'Sign Up'}
                 </button>
               </form>
