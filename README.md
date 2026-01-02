@@ -11,7 +11,6 @@ A full-stack authentication POC using AWS Cognito User Pools with Google Sign-In
 - ✅ Protected API routes
 - ✅ User profile display
 
-
 ## 📁 Project Structure
 
 ```
@@ -63,74 +62,11 @@ cd auth-poc-google-cognito
 
 ### 2. Configure AWS Cognito & Google OAuth
 
-See [docs/SETUP.md](docs/SETUP.md) for detailed configuration instructions.
+See [Google Console Setup](docs/Google%20Console/Google_Console_setup.md) and [AWS Cognito Setup](docs/AWS%20Cognito%20Configuration/AWS_Cognito_setup.md) for detailed instructions on setting up Google OAuth credentials and AWS Cognito User Pool.
 
-### 3. Run the Application
+### 3. Set Up Environment Variables
 
-#### Option A: Using Docker (Recommended)
-
-```bash
-# Copy environment files
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
-
-# Edit .env files with your Cognito credentials
-
-# Build and run with Docker Compose
-docker-compose up --build
-```
-
-**Access the application:**
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API Docs: http://localhost:8000/docs
-
-📖 See [docs/DOCKER.md](docs/DOCKER.md) for detailed Docker instructions.
-
-#### Option B: Manual Setup
-
-**Backend:**
-```bash
-# Go to backend directory
-cd backend
-
-# Copy environment file
-cp .env.example .env      #Edit with your Cognito credentials
-
-#Create virtual environment (optional but recommended)
-python -m venv venv
-# Activate virtual environment
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the FastAPI server
-uvicorn main:app --reload --port 8000
-```
-
-**Frontend (new terminal):**
-```bash
-# Go to frontend directory
-cd frontend
-
-# Install dependencies
-npm install
-
-# Copy environment file
-cp .env.example .env  # Edit .env with your Cognito credentials
-
-# Start the React development server
-npm start
-```
-
-**Access the application:**
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API Docs: http://localhost:8000/docs
-
-## 🔧 Configuration
-
-### Backend Environment Variables
+#### Backend Environment Variables
 
 Create `backend/.env`:
 
@@ -140,7 +76,7 @@ COGNITO_USER_POOL_ID=us-east-1_XXXXXXXXX
 COGNITO_APP_CLIENT_ID=your-app-client-id
 ```
 
-### Frontend Environment Variables
+#### Frontend Environment Variables
 
 Create `frontend/.env`:
 
@@ -150,6 +86,11 @@ REACT_APP_COGNITO_USER_POOL_ID=us-east-1_XXXXXXXXX
 REACT_APP_COGNITO_APP_CLIENT_ID=your-app-client-id
 REACT_APP_COGNITO_DOMAIN=your-domain.auth.us-east-1.amazoncognito.com
 ```
+
+### 3. Run the Application
+Choose one of the following options:
+- **Option A: Using Docker (Recommended)** - See [Run in Docker](docs/Project%20Setup%20Instructions/Run_in_Docker.md)
+- **Option B: Running Locally Without Docker** - See [Run Locally](docs/Project%20Setup%20Instructions/Run_Locally.md)
 
 
 ## 🧪 Testing the Flow
@@ -162,11 +103,6 @@ REACT_APP_COGNITO_DOMAIN=your-domain.auth.us-east-1.amazoncognito.com
    - Your Google account information
    - Authentication status
    - Backend API connection status
-
-## 📖 Documentation
-
-- [docs/SETUP.md](docs/SETUP.md) - Complete AWS Cognito & Google OAuth setup
-- [docs/DOCKER.md](docs/DOCKER.md) - Docker setup and commands
 
 
 ## 📝 License
