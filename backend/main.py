@@ -6,6 +6,10 @@ from jwt import PyJWKClient
 import os
 from pydantic import BaseModel
 from typing import Optional
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = FastAPI(title="Auth POC API")
 
