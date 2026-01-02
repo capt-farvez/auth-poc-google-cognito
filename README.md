@@ -10,24 +10,7 @@ A full-stack authentication POC using AWS Cognito User Pools with Google Sign-In
 - ✅ FastAPI backend with JWT validation
 - ✅ Protected API routes
 - ✅ User profile display
-- ✅ Clean, modern UI
 
-## 🏗️ Architecture
-
-```
-┌─────────────┐      ┌──────────────┐      ┌─────────────┐
-│   React     │─────▶│ AWS Cognito  │─────▶│   Google    │
-│  Frontend   │      │  User Pool   │      │    OAuth    │
-└─────────────┘      └──────────────┘      └─────────────┘
-       │                     │
-       │                     │ JWT Token
-       │                     │
-       ▼                     ▼
-┌─────────────────────────────────────┐
-│         FastAPI Backend             │
-│      (JWT Token Validation)         │
-└─────────────────────────────────────┘
-```
 
 ## 📁 Project Structure
 
@@ -36,25 +19,25 @@ auth-poc-google-cognito/
 ├── backend/
 │   ├── main.py                 # FastAPI application
 │   ├── requirements.txt        # Python dependencies
-│   └── .env.example           # Environment variables template
+│   └── .env.example            # Environment variables template
 ├── frontend/
 │   ├── public/
-│   │   └── index.html         # HTML template
+│   │   └── index.html          # HTML template
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── LoginPage.js   # Login page component
+│   │   │   ├── LoginPage.js    # Login page component
 │   │   │   ├── LoginPage.css
-│   │   │   ├── ProfilePage.js # Profile page component
+│   │   │   ├── ProfilePage.js  # Profile page component
 │   │   │   └── ProfilePage.css
-│   │   ├── App.js             # Main app component
+│   │   ├── App.js              # Main app component
 │   │   ├── App.css
-│   │   ├── index.js           # Entry point
+│   │   ├── index.js            # Entry point
 │   │   └── index.css
 │   ├── package.json
-│   └── .env.example           # Environment variables template
+│   └── .env.example            # Environment variables template
 ├── docs/
-│   └── SETUP.md              # Detailed setup guide
-└── README.md                 # This file
+│   └── SETUP.md                # Detailed setup guide
+└── README.md                   # This file
 ```
 
 ## 🚀 Quick Start
@@ -74,7 +57,7 @@ auth-poc-google-cognito/
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/capt-farvez/auth-poc-google-cognito.git
 cd auth-poc-google-cognito
 ```
 
@@ -108,19 +91,35 @@ docker-compose up --build
 
 **Backend:**
 ```bash
+# Go to backend directory
 cd backend
+
+# Copy environment file
+cp .env.example .env      #Edit with your Cognito credentials
+
+#Create virtual environment (optional but recommended)
+python -m venv venv
+# Activate virtual environment
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+# Install dependencies
 pip install -r requirements.txt
-cp .env.example .env
-# Edit .env with your Cognito credentials
+
+# Run the FastAPI server
 uvicorn main:app --reload --port 8000
 ```
 
 **Frontend (new terminal):**
 ```bash
+# Go to frontend directory
 cd frontend
+
+# Install dependencies
 npm install
-cp .env.example .env
-# Edit .env with your Cognito credentials
+
+# Copy environment file
+cp .env.example .env  # Edit .env with your Cognito credentials
+
+# Start the React development server
 npm start
 ```
 
@@ -152,17 +151,6 @@ REACT_APP_COGNITO_APP_CLIENT_ID=your-app-client-id
 REACT_APP_COGNITO_DOMAIN=your-domain.auth.us-east-1.amazoncognito.com
 ```
 
-## 📚 API Endpoints
-
-### Public Endpoints
-
-- `GET /` - Root endpoint
-- `GET /api/health` - Health check
-
-### Protected Endpoints (Requires JWT)
-
-- `GET /api/profile` - Get user profile
-- `GET /api/protected` - Example protected route
 
 ## 🧪 Testing the Flow
 
@@ -180,23 +168,6 @@ REACT_APP_COGNITO_DOMAIN=your-domain.auth.us-east-1.amazoncognito.com
 - [docs/SETUP.md](docs/SETUP.md) - Complete AWS Cognito & Google OAuth setup
 - [docs/DOCKER.md](docs/DOCKER.md) - Docker setup and commands
 
-## 🛡️ Security
-
-- JWT tokens are validated on every API request
-- CORS is configured for local development
-- Tokens are securely stored by AWS Amplify
-- Never commit `.env` files to version control
-
-## 🚧 Production Deployment
-
-Before deploying to production:
-
-1. Use HTTPS for all endpoints
-2. Configure proper CORS origins
-3. Use AWS Secrets Manager for credentials
-4. Set up CloudFront + S3 for frontend
-5. Deploy backend to AWS Lambda or ECS
-6. Enable MFA for sensitive operations
 
 ## 📝 License
 
